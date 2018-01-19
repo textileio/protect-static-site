@@ -10,9 +10,7 @@ var proxy = httpProxy.createProxyServer({});
 try {
   env(__dirname + '/.env');
 }
-catch(err) {
-  console.log(err);
-}
+catch(err) {}
 
 var REPO = process.env.REPO || false;
 
@@ -22,22 +20,20 @@ if (REPO) {
   mkdocs.build(REPO);
 }
 
-var github_hook = process.env.GITHUB_HOOK || '/gitlab/callback';
-var github_port = '3420';
-var github = githubhook({path: github_hook, port: github_port});
+var github = githubhook({path: '/gitlab/callback'});
+
+github.listen();
 
 github.on('push', function (repo, ref, data) {
   if (REPO === data['project']['path_with_namespace'])
     mkdocs.build(data['project']['path_with_namespace']);
 });
 
-github.listen();
-
 var app = express();
 
-app.post(github_hook, function(req, res) {
+app.post('/gitlab/callback', function(req, res) {
   proxy.web(req, res, {
-    target: 'http://127.0.0.1:' + github_port
+    target: 'http://127.0.0.1:3420'
   });
 });
 
