@@ -33,6 +33,7 @@ github.on('push', function (repo, ref, data) {
 var app = express();
 
 app.post('/gitlab/callback', function(req, res) {
+  console.log(req)
   proxy.web(req, res, {
     target: 'http://127.0.0.1:3420'
   });
