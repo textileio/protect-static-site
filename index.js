@@ -25,6 +25,7 @@ var github = githubhook({path: '/gitlab/callback'});
 github.listen();
 
 github.on('push', function (repo, ref, data) {
+  console.log(repo, ref, data)
   if (REPO === data['project']['path_with_namespace'])
     mkdocs.build(data['project']['path_with_namespace']);
 });
