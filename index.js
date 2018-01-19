@@ -22,13 +22,13 @@ if (REPO) {
   mkdocs.build(REPO);
 }
 
-var github_hook = process.env.GITHUB_HOOK || '/github/callback';
+var github_hook = process.env.GITHUB_HOOK || '/gitlab/callback';
 var github_port = '3420';
 var github = githubhook({path: github_hook, port: github_port});
 
 github.on('push', function (repo, ref, data) {
-  if (REPO === data['repository']['full_name'])
-    mkdocs.build(data['repository']['full_name']);
+  if (REPO === data['project']['path_with_namespace'])
+    mkdocs.build(data['project']['path_with_namespace']);
 });
 
 github.listen();
@@ -44,7 +44,7 @@ app.post(github_hook, function(req, res) {
 var server = new protect(__dirname);
 server.init(app);
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 9090);
 
-console.log('Server started http://127.0.0.1:3000');
+console.log('Server started http://127.0.0.1:9090');
 
